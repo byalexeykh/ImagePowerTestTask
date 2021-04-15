@@ -34,8 +34,16 @@ private:
 	void MoveRight(float value);
 	void Turn(float value);
 	void LookUp(float value);
+	void Interact();
+	void SpawnMinion();
 
 	// movement
 	float MovementSpeed;
 	FVector MovementDir;
+
+	// gameplay
+	TArray<class AMinion*> Minions;
+	// Linetrace
+	FHitResult Hit;
+	FCollisionQueryParams Params;
 };

@@ -5,12 +5,18 @@
 #include "Components/CapsuleComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "DrawDebugHelpers.h"
+#include "Minion.h"
+#include "MyPlayerController.h"
 
 // Sets default values
 AMyCharacter::AMyCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+	bUseControllerRotationPitch = true;
+	bUseControllerRotationRoll = true;
+	bUseControllerRotationYaw = true;
 	GetCapsuleComponent()->SetCapsuleSize(40, 70);
 	GetCapsuleComponent()->SetMobility(EComponentMobility::Movable);
 
@@ -40,6 +46,10 @@ AMyCharacter::AMyCharacter()
 	DirectionMeshComp->SetRelativeLocation(FVector(0, 0, 30));
 	DirectionMeshComp->SetRelativeRotation(FRotator(-90, 0, 0));
 	DirectionMeshComp->SetWorldScale3D(FVector(0.5f));
+
+	// Linetrace settings
+	Params.AddIgnoredActor(this);
+	Params.bTraceComplex = true;
 }
 
 // Called when the game starts or when spawned
@@ -53,7 +63,42 @@ void AMyCharacter::BeginPlay()
 void AMyCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	GetWorld()->LineTraceSingleByChannel(Hit, CameraComp->GetComponentLocation(), CameraComp->GetComponentLocation() + (GetControlRotation().Vector() * 600), ECollisionChannel::ECC_Visibility, Params);
+	if (IsPlayerControlled()) {
+		if (Hit.GetActor()) {
+			if (Hit.GetActor()->IsA<AMinion>()) {
+				GetController<AMyPlayerController>()->OnMinionEnter();
+			}
+			else {
+				GetController<AMyPlayerController>()->OnMinionLeft();
+			}
+		}
+		else {
+			GetController<AMyPlayerController>()->OnMinionLeft();
+		}
+	}
+}
 
+void AMyCharacter::SpawnMinion()
+{
+	if (Hit.GetActor()) {
+		if (Minions.Num() >= 5 && Minions[0]) {
+			Minions[0]->Destroy();
+			Minions.RemoveAt(0, 1, true);
+		}
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+		Minions.Add(GetWorld()->SpawnActor<AMinion>(Hit.ImpactPoint, FRotator::ZeroRotator, SpawnParams));
+	}
+}
+
+void AMyCharacter::Interact()
+{
+	if (Hit.GetActor()) {
+		if (Hit.GetActor()->IsA<AMinion>()) {
+			GetController<AMyPlayerController>()->OnInteract();
+		}
+	}
 }
 
 // Called to bind functionality to input
@@ -64,6 +109,9 @@ void AMyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 	PlayerInputComponent->BindAxis("MoveRight", this, &AMyCharacter::MoveRight);
 	PlayerInputComponent->BindAxis("Turn", this, &AMyCharacter::Turn);
 	PlayerInputComponent->BindAxis("LookUp", this, &AMyCharacter::LookUp);
+
+	PlayerInputComponent->BindAction("SpawnMinion", IE_Pressed, this, &AMyCharacter::SpawnMinion);
+	PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &AMyCharacter::Interact);
 }
 
 void AMyCharacter::MoveForward(float value)
@@ -83,6 +131,5 @@ void AMyCharacter::Turn(float value)
 
 void AMyCharacter::LookUp(float value)
 {
-	AddControllerPitchInput(value);
+	AddControllerPitchInput(-1 * value);
 }
-

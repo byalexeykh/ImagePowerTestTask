@@ -16,6 +16,13 @@ class TESTTASK_API AMyPlayerController : public APlayerController
 public:
 	AMyPlayerController();
 
-private:
+	// Blueprint events
+	UFUNCTION(BlueprintImplementableEvent)
+		void OnMinionEnter();
 
+	UFUNCTION(BlueprintImplementableEvent)
+		void OnMinionLeft();
+
+	UFUNCTION(BlueprintImplementableEvent)
+		void OnInteract();
 };

@@ -6,6 +6,6 @@
 #include "MyPlayerController.h"
 
 AMyGameModeBase::AMyGameModeBase() {
-	DefaultPawnClass = AMyCharacter::StaticClass();
-	PlayerControllerClass = AMyPlayerController::StaticClass();
+	DefaultPawnClass = ConstructorHelpers::FObjectFinder<UClass>(TEXT("/Game/Blueprints/BP_MyCharacter.BP_MyCharacter_C")).Object;
+	PlayerControllerClass = ConstructorHelpers::FObjectFinder<UClass>(TEXT("/Game/Blueprints/BP_MyPlayerController.BP_MyPlayerController_C")).Object;
 }
