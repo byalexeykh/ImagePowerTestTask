@@ -90,7 +90,7 @@ void AMyCharacter::SpawnMinion()
 		FActorSpawnParameters SpawnParams;
 		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
 		
-		AMinion* m = GetWorld()->SpawnActor<AMinion>(/*MinionBlueprintClassRef, */Hit.ImpactPoint, FRotator::ZeroRotator, SpawnParams);
+		AMinion* m = GetWorld()->SpawnActor<AMinion>(/*MinionBlueprintClassRef, */Hit.ImpactPoint, FRotator::ZeroRotator, SpawnParams); // MinionBlueprintClassRef to reference do BP_Minion'u, ktory musiał pobierać FObjectFinder
 		
 		if (m) {
 			Minions.Add(m);

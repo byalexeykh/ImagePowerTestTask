@@ -14,6 +14,11 @@ void AAIMinion::MoveTo(EObjectType::Type TypeOfObjectToMoveTo)
 		}
 	}
 
+	if (ContainersOfNeededType.Num() <= 0) {
+		UE_LOG(LogTemp, Error, TEXT("There's no such object!"));
+		return;
+	}
+
 	TArray<float> temp;
 	ContainersOfNeededType.GenerateKeyArray(temp);
 
