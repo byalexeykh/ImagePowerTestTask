@@ -13,4 +13,3 @@ AContainerClass::AContainerClass()
 
 	RootComponent = MeshComp;
 }
-

@@ -16,18 +16,15 @@ public:
 	AMyCharacter();
 
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-private:	
 	// components
 	class UCameraComponent* CameraComp;
 	class UStaticMeshComponent* ChararcterMeshComp;
 	class UStaticMeshComponent* DirectionMeshComp;
+
+private:	
 
 	// input
 	void MoveForward(float value);
@@ -37,12 +34,10 @@ private:
 	void Interact();
 	void SpawnMinion();
 
-	// movement
-	float MovementSpeed;
-	FVector MovementDir;
-
 	// gameplay
+	bool bCanInteract;
 	TArray<class AMinion*> Minions;
+	UClass* MinionBlueprintClassRef;
 	// Linetrace
 	FHitResult Hit;
 	FCollisionQueryParams Params;

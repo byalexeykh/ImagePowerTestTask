@@ -17,12 +17,12 @@ public:
 	AMyPlayerController();
 
 	// Blueprint events
-	UFUNCTION(BlueprintImplementableEvent)
+	UFUNCTION(BlueprintImplementableEvent, Category = "TestTask")
 		void OnMinionEnter();
 
-	UFUNCTION(BlueprintImplementableEvent)
+	UFUNCTION(BlueprintImplementableEvent, Category = "TestTask")
 		void OnMinionLeft();
 
-	UFUNCTION(BlueprintImplementableEvent)
-		void OnInteract();
+	UFUNCTION(BlueprintImplementableEvent, Category = "TestTask")
+		void OnInteract(class AMinion* Minion);
 };

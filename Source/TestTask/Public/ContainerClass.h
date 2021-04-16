@@ -7,14 +7,16 @@
 #include "ContainerClass.generated.h"
 
 UENUM(BlueprintType)
-enum class ObjectType : uint8 {
-	Cube,
-	Cylinder,
-	Pyramid,
-	Sphere,
-	Torus,
-	Wedge
-};
+namespace EObjectType {
+	enum Type {
+		Cube,
+		Cylinder,
+		Pyramid ,
+		Sphere,
+		Torus,
+		Wedge 
+	};
+}
 
 UCLASS()
 class TESTTASK_API AContainerClass : public AActor
@@ -24,9 +26,8 @@ class TESTTASK_API AContainerClass : public AActor
 public:	
 	// Sets default values for this actor's properties
 	AContainerClass();
-
-	UPROPERTY(EditAnywhere, Category = "TestTask")
-		ObjectType NeededObject;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "TestTask")
+		TEnumAsByte<EObjectType::Type> NeededObject;
 
 private:
 	UStaticMeshComponent* MeshComp;

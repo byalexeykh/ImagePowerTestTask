@@ -50,13 +50,15 @@ AMyCharacter::AMyCharacter()
 	// Linetrace settings
 	Params.AddIgnoredActor(this);
 	Params.bTraceComplex = true;
-}
 
-// Called when the game starts or when spawned
-void AMyCharacter::BeginPlay()
-{
-	Super::BeginPlay();
-	
+	// Getting BP version of AMinion class 
+	ConstructorHelpers::FObjectFinder<UClass> MinionBP(TEXT("/Game/Blueprints/BP_Minion.BP_Minion_C"));
+	if (MinionBP.Object != NULL) {
+		MinionBlueprintClassRef = (UClass*)MinionBP.Object;
+	}
+
+	// default var values
+	bCanInteract = false;
 }
 
 // Called every frame
@@ -68,13 +70,16 @@ void AMyCharacter::Tick(float DeltaTime)
 		if (Hit.GetActor()) {
 			if (Hit.GetActor()->IsA<AMinion>()) {
 				GetController<AMyPlayerController>()->OnMinionEnter();
+				bCanInteract = true;
 			}
 			else {
 				GetController<AMyPlayerController>()->OnMinionLeft();
+				bCanInteract = false;
 			}
 		}
 		else {
 			GetController<AMyPlayerController>()->OnMinionLeft();
+			bCanInteract = false;
 		}
 	}
 }
@@ -82,22 +87,28 @@ void AMyCharacter::Tick(float DeltaTime)
 void AMyCharacter::SpawnMinion()
 {
 	if (Hit.GetActor()) {
-		if (Minions.Num() >= 5 && Minions[0]) {
-			Minions[0]->Destroy();
-			Minions.RemoveAt(0, 1, true);
-		}
 		FActorSpawnParameters SpawnParams;
-		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
-		Minions.Add(GetWorld()->SpawnActor<AMinion>(Hit.ImpactPoint, FRotator::ZeroRotator, SpawnParams));
+		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
+		
+		AMinion* m = GetWorld()->SpawnActor<AMinion>(MinionBlueprintClassRef, Hit.ImpactPoint, FRotator::ZeroRotator, SpawnParams);
+		
+		if (m) {
+			Minions.Add(m);
+			// A variable to make sure that spawns BP version of minion
+			//UE_LOG(LogTemp, Warning, TEXT("TestVar: %i"), Minions[0]->TestVar);
+		
+			if (Minions.Num() >= 6) {
+				Minions[0]->Destroy();
+				Minions.RemoveAt(0, 1, true);
+			}
+		}
 	}
 }
 
 void AMyCharacter::Interact()
 {
-	if (Hit.GetActor()) {
-		if (Hit.GetActor()->IsA<AMinion>()) {
-			GetController<AMyPlayerController>()->OnInteract();
-		}
+	if (bCanInteract) {
+		GetController<AMyPlayerController>()->OnInteract(Cast<AMinion>(Hit.GetActor()));
 	}
 }
 
