@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "MyCharacter.h"
@@ -52,10 +52,10 @@ AMyCharacter::AMyCharacter()
 	Params.bTraceComplex = true;
 
 	// Getting BP version of AMinion class 
-	ConstructorHelpers::FObjectFinder<UClass> MinionBP(TEXT("/Game/Blueprints/BP_Minion.BP_Minion_C"));
-	if (MinionBP.Object != NULL) {
-		MinionBlueprintClassRef = (UClass*)MinionBP.Object;
-	}
+	//ConstructorHelpers::FObjectFinder<UClass> MinionBP(TEXT("/Game/Blueprints/BP_Minion.BP_Minion_C"));  // =========================== //
+	//if (MinionBP.Object != NULL) {																	   //		PROBLEM O KTÓRYM	  //
+	//	MinionBlueprintClassRef = (UClass*)MinionBP.Object;												   //		CHODZIŁO W MAILU	  //
+	//}																									   // =========================== //
 
 	// default var values
 	bCanInteract = false;
@@ -90,7 +90,7 @@ void AMyCharacter::SpawnMinion()
 		FActorSpawnParameters SpawnParams;
 		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
 		
-		AMinion* m = GetWorld()->SpawnActor<AMinion>(MinionBlueprintClassRef, Hit.ImpactPoint, FRotator::ZeroRotator, SpawnParams);
+		AMinion* m = GetWorld()->SpawnActor<AMinion>(/*MinionBlueprintClassRef, */Hit.ImpactPoint, FRotator::ZeroRotator, SpawnParams);
 		
 		if (m) {
 			Minions.Add(m);

@@ -8,6 +8,8 @@
 
 AMinion::AMinion() {
 	ChararcterMeshComp->SetCanEverAffectNavigation(false);
+	AIControllerClass = AAIMinion::StaticClass();
+	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 }
 
 void AMinion::MoveToClosestObjectOfType(EObjectType::Type ObjectType)
